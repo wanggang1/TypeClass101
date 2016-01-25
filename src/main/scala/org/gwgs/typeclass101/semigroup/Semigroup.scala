@@ -32,8 +32,9 @@ object Semigroup {
     new SemigroupSyntax[A] {
       def self: A = a
       def F: Semigroup[A] = implicitly[Semigroup[A]]
-  }
+    }
 
+  
 //  implicit def optionInstances[A: Semigroup] = new Semigroup[Option[A]] {
 //    def append(a: Option[A], b: Option[A]): Option[A] = {
 //      (a, b) match {

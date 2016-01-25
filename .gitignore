@@ -3,5 +3,7 @@
 .classpath
 .project
 .settings
+.idea
+.cache-main
 target
 /bin/
