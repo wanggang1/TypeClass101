@@ -7,6 +7,8 @@ object Main {
     Semigroup.demo
     
     Monoid.demo
+    
+    Functor.demo
 
   }
   
