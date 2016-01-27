@@ -28,7 +28,7 @@ object Category {
   }
   
   /**
-   * This solve the Option return type composition
+   * composition with arrow pointing to Option type
    */
   val fancyCategory: Category[Fancy] = new Category[Fancy] {
     def id[A] : Fancy[A,A] = Fancy(a => Some(a))
@@ -43,6 +43,17 @@ object Category {
     }
   }
   
+  /**
+   * composition with arrow pointing to List type
+   * 
+   * This is almost identical implementation as Option.  Abstruct to Monad!!!
+   */
+  val fancy2Category : Category[Fancy2] = new Category[Fancy2] {
+    def id[A] = Fancy2 { a => List(a)}
+    def compose[A,B,C](g: Fancy2[B,C], f: Fancy2[A,B]) : Fancy2[A,C] = Fancy2[A,C] { a => f.run(a) flatMap g.run }
+  }
+  
+  ///////////////////////// Demo ////////////////////////////////////
   def positive(i: Int): Option[String] = {
     val f : Int => Option[Int] = a => if (a > 0) Some(a) else None
     val g: Int => Option[String] = a => Some(a.toString)
@@ -50,6 +61,16 @@ object Category {
     h.run(i)
   }
   
+  def demo = {
+    println("============Category==================")
+    
+    println("Use Category: " + positive(5))
+    println("Use Category: " + positive(-5))
+    
+    println("")
+  }
+  
 }
 
 case class Fancy[A,B](run : A => Option[B])
+case class Fancy2[A,B](run: A => List[B])
