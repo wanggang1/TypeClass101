@@ -32,7 +32,15 @@ object Functor {
     val fx = Functor[Option].map(Some(3))((x: Int) => x + 2)
     println("Using apply method: " + fx)
     
+    val fx2 = Functor[Option].map(Some(3))((x: Int) => (y: Int) => x + y )
+    println("Using apply method (not working): " + fx2)
+    
+    val fx3 = Functor[Option].map(Some((3,4)))((add _).tupled)  //See Applicative
+    println("Using apply method (tupled): " + fx3)
+    
     println("")
   }
+  
+  private def add(x: Int, y: Int) = x + y
 
 }

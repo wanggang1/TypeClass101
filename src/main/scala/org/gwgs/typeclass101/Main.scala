@@ -10,6 +10,7 @@ object Main {
     
     Functor.demo
 
+    Applicative.demo
   }
   
 }

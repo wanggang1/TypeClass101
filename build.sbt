@@ -9,6 +9,7 @@ scalaVersion := "2.11.7"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 libraryDependencies ++= Seq(
+  "com.typesafe.play" %% "play-json" % "2.4.6",
   "org.scalatest" %% "scalatest" % "2.1.6" % "test",
   "junit" % "junit" % "4.11" % "test",
   "com.novocode" % "junit-interface" % "0.10" % "test"
