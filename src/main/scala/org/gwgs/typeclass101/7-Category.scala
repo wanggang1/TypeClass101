@@ -3,6 +3,8 @@ package org.gwgs.typeclass101
 import scala.language.higherKinds
 
 /**
+ * Category theory is a very general mathematical theory.  It's dealing with Abstraction and Composition
+ * 
  * Category:
  * some objects of any type,  connect these objects using arrows.  So if we have an arrow
  * from f: A -> B and an arrow from g: B -> C, category theory implies that we also have

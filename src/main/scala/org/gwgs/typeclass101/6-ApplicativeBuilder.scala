@@ -52,11 +52,20 @@ object ApplicativeBuilder {
   implicit def playApplicative2Applicative[F[_]](implicit P: PlayApplicative[F],
     ev: PlayApplicative ~~> Applicative): Applicative[F] = ev(P)
     
-  /*
-  implicit val abcReads : Reads[ABC]= (
-  (__ \ "a").read[Int] |@|
-  (__ \ "b").read[Int] |@|
-  (__ \ "c").read[Int]) { ABC.apply _ }
-  */
+  /*  
+   * See ApplicativeBuilder, https://inoio.de/blog/2014/11/10/type-class-101-applicativebuilder/
+   * 
+   * scalaz, http://eed3si9n.com/learning-scalaz/Applicative+Builder.html
+   * instead of Applicative[Option].apply2, scalaz ApplicativeBuilder has combinator, |@|
+   * implicit val abcReads : Reads[ABC]= (
+   * (__ \ "a").read[Int] |@|
+   * (__ \ "b").read[Int] |@|
+   * (__ \ "c").read[Int]) { ABC.apply _ }
+   * 
+   * play Json also uses ApplicativeBuilder pattern
+   * ((__ \ 'code).read[String] and
+   *  (__ \ 'name).read[String] and
+   *  (__ \ 'timeZone).read[String])(ABC.apply _)
+   */
   
 }

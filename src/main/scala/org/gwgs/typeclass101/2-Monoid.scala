@@ -13,7 +13,8 @@ trait Monoid[A] extends Semigroup[A] {
 
 object Monoid {
   
-  def apply[A](implicit F : Monoid[A]) : Monoid[A] = F
+  //def apply[A](implicit F : Monoid[A]) : Monoid[A] = F
+  def apply[A: Monoid] = implicitly[Monoid[A]]
   
   implicit val intSemigroup = new Semigroup[Int] {
     def append(a: Int, b: Int): Int = a + b
@@ -40,12 +41,12 @@ object Monoid {
   
   /*
    * Option sample, it's equivalent to this signature:
-   * implicit def optionInstance[A : Semigroup] = new Monoid[Option[A]] {
+   * implicit def optionInstance[A](implicit sa: Semigroup[A]) = new Monoid[Option[A]] {
    */
-  implicit def optionInstance[A](implicit sa: Semigroup[A]) = new Monoid[Option[A]] {
+  implicit def optionInstance[A: Semigroup] = new Monoid[Option[A]] {
     def empty : Option[A] = None
     def append(a : Option[A], b: Option[A]) : Option[A] = (a, b) match {
-      case (Some(a1), Some(b1)) => Some(Semigroup[A].append(a1, b1))
+      case (Some(a1), Some(b1)) => Some(implicitly[Semigroup[A]].append(a1, b1))
       case (Some(_), None) => a
       case (None, Some(_)) => b
       case _ => empty
@@ -57,7 +58,7 @@ object Monoid {
      def append(a: List[A], b: List[A]) = a ++ b
   }
   
-  implicit class SumOps[A : Monoid](list : List[A]) {
+  implicit class SumOps[A: Monoid](list : List[A]) {
     val F = implicitly[Monoid[A]]
     def sumList() : A = list.foldLeft(F.empty)(F.append(_,_))
   }

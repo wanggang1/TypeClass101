@@ -15,7 +15,8 @@ trait Functor[F[_]] {
 
 object Functor {
   
-  def apply[A[_]](implicit f : Functor[A]) : Functor[A] = f
+  //def apply[A[_]](implicit f : Functor[A]) : Functor[A] = f
+  def apply[A[_]: Functor] = implicitly[Functor[A]]
   
   implicit val optionFunctorInstance = new Functor[Option] {
     def map[A,B](F: Option[A])(f: A => B) : Option[B] = {
@@ -33,14 +34,18 @@ object Functor {
     println("Using apply method: " + fx)
     
     val fx2 = Functor[Option].map(Some(3))((x: Int) => (y: Int) => x + y )
-    println("Using apply method (not working): " + fx2)
+    println("Using apply method (return function because of curried f): " + fx2)
+    val fx21 = Functor[Option].map(fx2)((x: Int => Int) => x(2) )
+    println(".....continue mapping: " + fx21)
     
-    val fx3 = Functor[Option].map(Some((3,4)))((add _).tupled)  //See Applicative
-    println("Using apply method (tupled): " + fx3)
+    //the work around....
+    val addTuple2Fun = (add2 _).tupled
+    val fx3 = Functor[Option].map(Some((3,2)))(addTuple2Fun)  //See Applicative
+    println("work around... (tupled): " + fx3)
     
     println("")
   }
   
-  private def add(x: Int, y: Int) = x + y
+  private def add2(x: Int, y: Int) = x + y
 
 }

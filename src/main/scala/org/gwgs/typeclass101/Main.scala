@@ -4,15 +4,15 @@ object Main {
 
   def main(args: Array[String]) {
     
-    Semigroup.demo
+    //Semigroup.demo
     
-    Monoid.demo
+    //Monoid.demo
     
-    Functor.demo
+    //Functor.demo
 
     Applicative.demo
     
-    Category.demo
+    //Category.demo
   }
   
 }

@@ -18,8 +18,9 @@ trait SemigroupSyntax[A] {
 }
 
 object Semigroup {
-  def apply[A](implicit F : Semigroup[A]) = F
-
+  //def apply[A: Semigroup](implicit F : Semigroup[A]) = F
+  def apply[A: Semigroup] = implicitly[Semigroup[A]]
+  
   implicit val intSemigroup = new Semigroup[Int] {
     def append(a: Int, b: Int): Int = a + b
   }
@@ -31,7 +32,7 @@ object Semigroup {
   implicit def optionInstances[A: Semigroup] = new Semigroup[Option[A]] {
     def append(a: Option[A], b: Option[A]): Option[A] = {
       (a, b) match {
-        case (Some(a1), Some(b1)) => Some(Semigroup[A].append(a1, b1))
+        case (Some(a1), Some(b1)) => Some(implicitly[Semigroup[A]].append(a1, b1))
         case (Some(_), None) => a
         case (None, Some(_)) => b
         case _ => None
@@ -45,24 +46,25 @@ object Semigroup {
       def F: Semigroup[A] = implicitly[Semigroup[A]]
     }
 
-  //Can the above method also take care of Option[A]????
+
+  //why the above method does not take care of Option[A]????
   implicit def ToSemigroupOpsForOption[A: Semigroup](a: Option[A]): SemigroupSyntax[Option[A]] =
     new SemigroupSyntax[Option[A]] {
       def self: Option[A] = a
       def F: Semigroup[Option[A]] = implicitly[Semigroup[Option[A]]]
     }
-  
+
   def demo = {
     println("============Semigroup================")
     
     val x = Semigroup[Int].append(1,2)
-    println("Using apply method: " + x)
+    println("Using Semigroup.apply method: " + x)
     
     val x1 = Semigroup[Option[Int]].append(Some(1), Some(2))
-    println("Using apply method for Option[A]: " + x1)
+    println("Using Semigroup.apply method for Option[A]: " + x1)
     
     val x2 = Semigroup[Option[Boolean]].append(Some(true), Some(false))
-    println("Using apply method for Option[A]: " + x2)
+    println("Using Semigroup.apply method for Option[A]: " + x2)
     
     val y = 3 |+| 4
     println("Using implicit conversion for Int: " + y)
