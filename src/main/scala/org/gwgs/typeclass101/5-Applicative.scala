@@ -1,6 +1,7 @@
 package org.gwgs.typeclass101
 
 import scala.language.higherKinds
+import scala.concurrent.Future
 
 trait Applicative[F[_]] extends Functor[F] {
   
@@ -10,7 +11,7 @@ trait Applicative[F[_]] extends Functor[F] {
   
   /**
    * ff = map(f)(_.curried), maps F[(A,B) => C] to F[A => B => C]
-   * ff2 = ap(fa)(map(f)(ff)), produces F[B => C]
+   * ff2 = ap(fa)(ff), produces F[B => C]
    * ap(fb)(ff2) produces F[C]
    */
   def ap2[A,B,C](fa: => F[A],fb: => F[B])(f: F[(A,B) => C]) : F[C] =
@@ -18,6 +19,12 @@ trait Applicative[F[_]] extends Functor[F] {
     
   def apply2[A,B,C](fa: => F[A],fb: => F[B])(f: (A,B) => C) : F[C] =
     ap2(fa,fb)(pure(f))
+    
+  def ap3[A,B,C,D](fa: => F[A],fb: => F[B],fc: => F[C])(f: F[(A,B,C) => D]) : F[D] =
+    ap(fc)(ap(fb)(ap(fa)(map(f)(_.curried))))
+    
+  def apply3[A,B,C,D](fa: => F[A],fb: => F[B],fc: => F[C])(f: (A,B,C) => D) : F[D] =
+    ap3(fa,fb,fc)(pure(f))
   
   override def map[A, B](fa: F[A])(f: A => B): F[B] =
     ap(fa)(pure(f))
@@ -47,6 +54,19 @@ object Applicative {
       } yield (f1(fa1))
     }
   }
+  
+  implicit val futureApplicativeInstance : Applicative[Future] = new Applicative[Future] {
+    import scala.concurrent.ExecutionContext.Implicits.global
+    
+    def pure[A](a: A): Future[A] = Future{a}
+  
+    def ap[A, B](fa: => Future[A])(ff: => Future[(A) => B]): Future[B] = 
+      for {
+        a <- fa
+        f <- ff
+      } yield f(a)
+  }
+  
   
   /**
    * The difference between Applicative and for-comprehension:
