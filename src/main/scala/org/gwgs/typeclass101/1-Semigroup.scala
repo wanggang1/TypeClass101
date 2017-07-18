@@ -18,6 +18,7 @@ trait SemigroupSyntax[A] {
 }
 
 object Semigroup {
+
   //def apply[A: Semigroup](implicit F : Semigroup[A]) = F
   def apply[A: Semigroup] = implicitly[Semigroup[A]]
   
@@ -39,15 +40,15 @@ object Semigroup {
       }
     }
   }
-  
+
+  // add operation |+| to a value of type A when Semigroup[A] exists
   implicit def ToSemigroupOps[A: Semigroup](a: A): SemigroupSyntax[A] =
     new SemigroupSyntax[A] {
       def self: A = a
       def F: Semigroup[A] = implicitly[Semigroup[A]]
     }
 
-
-  //why the above method does not take care of Option[A]????
+  // add operation |+| to a value of type Option[A] when Semigroup[Option[A]] exists
   implicit def ToSemigroupOpsForOption[A: Semigroup](a: Option[A]): SemigroupSyntax[Option[A]] =
     new SemigroupSyntax[Option[A]] {
       def self: Option[A] = a
@@ -67,16 +68,16 @@ object Semigroup {
     println("Using Semigroup.apply method for Option[A]: " + x2)
     
     val y = 3 |+| 4
-    println("Using implicit conversion for Int: " + y)
+    println("Using SemigroupSyntax implicit conversion for Int: " + y)
     
     val y2 = Some(3) |+| Some(4)
-    println("Using implicit conversion for Option[Int]: " + y2)
+    println("Using SemigroupSyntax implicit conversion for Option[Int]: " + y2)
     
     val bool = true |+| false
-    println("Using implicit conversion for Boolean: " + bool)
+    println("Using SemigroupSyntax implicit conversion for Boolean: " + bool)
     
     val bool2 = Some(true) |+| Some(false)
-    println("Using implicit conversion for Option[Boolean]: " + bool2)
+    println("Using SemigroupSyntax implicit conversion for Option[Boolean]: " + bool2)
     
     println("")
   }

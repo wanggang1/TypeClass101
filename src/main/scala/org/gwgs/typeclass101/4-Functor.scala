@@ -3,6 +3,8 @@ package org.gwgs.typeclass101
 import scala.language.higherKinds
 
 /**
+ * Higher kinded type
+ *
  * Laws of Functor
  * Identity: F[A].map(x => x) == F[A]
  * Composition:
@@ -15,8 +17,8 @@ trait Functor[F[_]] {
 
 object Functor {
   
-  //def apply[A[_]](implicit f : Functor[A]) : Functor[A] = f
-  def apply[A[_]: Functor] = implicitly[Functor[A]]
+  //def apply[FT[_]](implicit f : Functor[FT]) : Functor[FT] = f
+  def apply[FT[_]: Functor] = implicitly[Functor[FT]]
   
   implicit val optionFunctorInstance = new Functor[Option] {
     def map[A,B](F: Option[A])(f: A => B) : Option[B] = {

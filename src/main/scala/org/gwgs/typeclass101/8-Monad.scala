@@ -3,6 +3,8 @@ package org.gwgs.typeclass101
 import scala.language.higherKinds
 
 /**
+ * Higher kinded type
+ *
  * Monad is just another typeclass, it enables composing fancy functions because it has a flatMap
  */
 trait Monad[F[_]] { // F = Fancy type, like Option or List

@@ -3,11 +3,21 @@ package org.gwgs.typeclass101
 import scala.language.higherKinds
 import scala.concurrent.Future
 
+/**
+  * Higher kinded type
+  */
 trait Applicative[F[_]] extends Functor[F] {
   
   def pure[A](a: A): F[A]
 
   def ap[A, B](fa: => F[A])(f: => F[A => B]): F[B]
+
+  /**
+    * Then Functor's identity and composition laws needs
+    * to be satisfied by this method ???!!!
+    */
+  override def map[A, B](fa: F[A])(f: A => B): F[B] =
+    ap(fa)(pure(f))
   
   /**
    * ff = map(f)(_.curried), maps F[(A,B) => C] to F[A => B => C]
@@ -25,19 +35,17 @@ trait Applicative[F[_]] extends Functor[F] {
     
   def apply3[A,B,C,D](fa: => F[A],fb: => F[B],fc: => F[C])(f: (A,B,C) => D) : F[D] =
     ap3(fa,fb,fc)(pure(f))
-  
-  override def map[A, B](fa: F[A])(f: A => B): F[B] =
-    ap(fa)(pure(f))
+
 }
 
 object Applicative {
   
-  def apply[A[_]: Applicative] = implicitly[Applicative[A]]
+  def apply[FT[_]: Applicative] = implicitly[Applicative[FT]]
   
   implicit val optionApplicativeInstance : Applicative[Option] = new Applicative[Option] {
     def pure[A](a: A): Option[A] = Some(a)
   
-    def ap[A, B](fa: => Option[A])(f: => Option[(A) => B]): Option[B] = {
+    def ap[A, B](fa: => Option[A])(f: => Option[A => B]): Option[B] = {
       (fa, f) match {
         case (Some(fa1), Some(f1)) => Some(f1(fa1))
         case _ => None
@@ -47,7 +55,7 @@ object Applicative {
   
   implicit val listApplicativeInstance : Applicative[List] = new Applicative[List] {
     override def pure[A](a: A): List[A] = List(a)
-    override def ap[A, B](fa: => List[A])(f: => List[(A) => B]): List[B] = {
+    override def ap[A, B](fa: => List[A])(f: => List[A => B]): List[B] = {
       for {
         fa1 <- fa
         f1 <- f
@@ -60,7 +68,7 @@ object Applicative {
     
     def pure[A](a: A): Future[A] = Future{a}
   
-    def ap[A, B](fa: => Future[A])(ff: => Future[(A) => B]): Future[B] = 
+    def ap[A, B](fa: => Future[A])(ff: => Future[A => B]): Future[B] =
       for {
         a <- fa
         f <- ff
@@ -71,12 +79,12 @@ object Applicative {
   /**
    * The difference between Applicative and for-comprehension:
    * for-comprehension retrieves values sequentially vs. Applicative gets values out of context independently
-   * 
-   * see ApplicativeBuilder for eliminating Applicative[Option] prefix
    */
   def demo = {
     println("============Applicative================")
-    
+
+    // see ApplicativeBuilder for eliminating Applicative[Option] prefix
+
     val x = Applicative[Option].apply2(Some(1), Some(2))((x: Int, y: Int) => x + y)
     println("Using Applicative: " + x)
     

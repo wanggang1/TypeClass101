@@ -26,6 +26,7 @@ object Monoid {
     def append(a : Int, b: Int) : Int = F.append(a, b)
   }
   */
+  //Monoid is foldable operation
   implicit val intMonoid = new Monoid[Int] {
     def empty : Int = 0
     def append(a : Int, b: Int) : Int = implicitly[Semigroup[Int]].append(a, b)
