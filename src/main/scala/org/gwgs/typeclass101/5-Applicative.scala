@@ -59,7 +59,7 @@ object Applicative {
       for {
         fa1 <- fa
         f1 <- f
-      } yield (f1(fa1))
+      } yield f1(fa1)
     }
   }
   
